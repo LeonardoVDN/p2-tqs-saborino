@@ -19,7 +19,7 @@ Turma: CC. Grupo: 13. A composição é **preliminar**: "por enquanto", conforme
 ## 2. Nome e versão do sistema
 
 - **Sistema Saborino**: sistema web de gestão de uma pequena produção de alimentos. Cobre clientes, produtos, vendas, recebíveis (fiado), pagamentos, compras, produção e fechamento mensal.
-- **Versão testada:** release `a63a24f`, com código-fonte congelado em `01_SISTEMA_ALVO/saborino/` em 24/09/2026.
+- **Versão testada:** release `a63a24f`, com código-fonte congelado em `01_SISTEMA_ALVO/saborino/` em 24/09/2026. Antes da publicação, a cópia foi anonimizada: saíram os arquivos de implantação e os valores padrão que identificavam o uso real. Os desvios estão listados em `01_SISTEMA_ALVO/DESVIOS_DA_RELEASE.md`.
 - **Origem:** sistema desenvolvido anteriormente por um integrante (Leonardo Valentim), conforme a seção 5.2.
 - Todos os testes rodam numa cópia local com banco próprio e dados fictícios, conforme as seções 5.3 e 15.
 
@@ -112,8 +112,8 @@ p2_serve_stop && p2_pg_stop
 
 | Nível | Comando | Estado |
 |---|---|---|
-| Suíte existente do backend | `p2_manage test` | Executada em 24/09/2026: 69 testes, OK |
-| Suíte existente do frontend | `cd saborino/ui && npx vitest run` | Executada em 24/09/2026: 1 teste, OK |
+| Suíte existente do backend | `p2_manage test` (B) ou `docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manage.py test` (A) | 24/09/2026: 69 testes, OK (B, código original). Revalidada após a anonimização: 69 testes, OK (A) |
+| Suíte existente do frontend | `cd saborino/ui && npx vitest run` | 24/09/2026: 1 teste, OK (B). Revalidada após a anonimização: 1 teste, OK (A) |
 | Unitários do grupo (pytest) | a definir, pasta 07 | Fase 5 |
 | Integração/API (Postman + Newman) | a definir, pasta 08 | Fase 6 |
 | Sistema/interface (Selenium) | a definir, pasta 09 | Fase 6 |
@@ -145,7 +145,8 @@ GitHub Actions: **[a configurar na Fase 9]**.
 - **Docker no Mac, erro `docker-credential-desktop: executable file not found`:** o link `/usr/local/bin/docker-credential-desktop` pode apontar para `/Volumes/Docker/...`, que é a imagem de instalação e deixa de existir depois que ela é desmontada. Solução sem mexer no sistema: `export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"` antes dos comandos `docker compose`.
 - **Smoke test no macOS:** o `bash` padrão é o 3.2. O `smoke_api.sh` foi escrito para funcionar nele. Ao adaptar o script, não coloque aspas escapadas dentro de `$(...)`, porque isso corrompe o JSON enviado.
 - A forma A usa PostgreSQL 15.19 (imagem `postgres:15-alpine`), e a forma B usa o 15.18 embarcado. As duas são da mesma versão principal.
-- As migrações `accounts.0003_seed_socios` e `cadastros.0002_seed_inicial` fazem parte do código original e criam sócios e contas padrão. O seed fictício substitui as contas e os canais, mas os três sócios padrão continuam no banco.
+- As migrações `accounts.0003_seed_socios` e `cadastros.0002_seed_inicial` criam sócios, canais e contas padrão, todos com nomes neutros depois da anonimização: "Nós", "Sócio 1" e "Sócio 2"; "Canal A" a "Canal C"; e contas genéricas. O seed fictício substitui as contas e os canais, mas os três sócios padrão continuam no banco.
+- **Repositório no Mac:** para evitar as cópias de conflito do iCloud, o `.git` do repositório local fica fora da pasta Documentos (`git init --separate-git-dir`), e na pasta de entrega fica só um arquivo `.git` apontando para ele. Quem clonar pelo GitHub não precisa fazer isso, desde que clone fora do iCloud.
 
 ## 15. Contato do grupo
 
