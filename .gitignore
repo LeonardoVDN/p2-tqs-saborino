@@ -1,3 +1,13 @@
+# Só o código e o ambiente vão para o GitHub.
+# Documentos, evidências e diário ficam na pasta de entrega (Drive).
+/*
+!/.gitignore
+!/README.md
+!/01_SISTEMA_ALVO/
+/01_SISTEMA_ALVO/*
+!/01_SISTEMA_ALVO/saborino/
+!/01_SISTEMA_ALVO/ambiente_p2/
+
 __pycache__/
 *.pyc
 .venv/

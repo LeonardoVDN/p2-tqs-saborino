@@ -1,0 +1,8 @@
+# Complemento do docker-compose.yml do sistema para o ambiente de teste do P2.
+services:
+  api:
+    volumes:
+      - ../ambiente_p2:/p2:ro
+    environment:
+      - PYTHONPATH=/p2
+      - DJANGO_SETTINGS_MODULE=settings_p2
