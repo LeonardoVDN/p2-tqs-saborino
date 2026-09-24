@@ -13,7 +13,7 @@ Nenhuma regra de negócio, validação ou cálculo foi alterada. A tabela abaixo
 | `backend/cadastros/models.py`, `backend/cadastros/migrations/0001_initial.py` | Textos de ajuda e docstrings com os novos nomes. | Nenhum. |
 | `backend/accounts/migrations/0003_seed_socios.py`, `backend/accounts/models.py` | Sócios padrão viraram "Nós", "Sócio 1" e "Sócio 2". | Só os nomes dos cadastros iniciais. |
 | `backend/operacao/models.py`, `backend/operacao/migrations/0001_initial.py`, `ui/src/views/FechamentoView.vue`, `backend/operacao/management/commands/importar_saborino.py` | Valores do enum `SocioDestino` viraram `NOS`, `S1` e `S2`, com os rótulos correspondentes. As expressões reconhecidas pelo importador de planilha foram atualizadas. | O comportamento é o mesmo; mudaram só os códigos e rótulos. |
-| `backend/operacao/tests.py` | Canal e cliente usados no `setUp` receberam nomes neutros. | Nenhum. Os 69 testes continuam passando. |
+| `backend/operacao/tests.py`, `backend/accounts/tests.py` | Canal, cliente e usuário de teste receberam nomes neutros. | Nenhum. Os 69 testes continuam passando. |
 | `backend/core/settings.py` | Remetente e resposta padrão de e-mail passaram a usar `example.com`. | Nenhum no ambiente de teste (o envio de e-mail está desligado). |
 
 Evidência da revalidação: `evidencias_ambiente/2026-09-24_docker_validacao_codigo_anonimizado.txt`
