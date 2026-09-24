@@ -1,0 +1,15 @@
+# Suíte do backend após neutralizar o usuário de teste em accounts/tests.py — 2026-09-24T17:28:51-03:00
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manage.py test
+Found 69 test(s).
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+.....................................................................
+----------------------------------------------------------------------
+Ran 69 tests in 8.138s
+
+OK
+Destroying test database for alias 'default'...
+exit=0
+
+(containers encerrados com down, sem -v)
