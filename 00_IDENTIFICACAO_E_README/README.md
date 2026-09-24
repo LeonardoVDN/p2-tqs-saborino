@@ -43,7 +43,7 @@ Turma: CC. Grupo: 13. A composição é **preliminar**: "por enquanto", conforme
 
 Há duas formas de montar o ambiente.
 
-- **A. Com Docker (forma original do sistema):** Docker Desktop e Git.
+- **A. Com Docker (forma original do sistema):** Docker Desktop (validado com Docker 28.5.1 e Compose v2.40.3, em macOS 27 arm64), Git, `curl` e `python3` para o smoke test.
 - **B. Sem Docker (forma usada nas execuções automatizadas do grupo):** Linux ou macOS, Python 3.12, PostgreSQL 15, Node 22+ e Git. No Linux, o script `01_SISTEMA_ALVO/ambiente_p2/p2_linux.sh` instala sozinho o Python 3.12 (via `uv`) e um PostgreSQL 15 embarcado (via npm).
 
 ## 6. Instalação
@@ -56,14 +56,17 @@ source p2_linux.sh
 p2_install        # Python 3.12 + dependências + PostgreSQL 15 embarcado (em ~/.p2_saborino)
 ```
 
-Forma A, Docker (macOS com Docker Desktop; ainda não executada pelo grupo):
+Forma A, Docker (macOS com Docker Desktop; validada em 24/09/2026, evidências em `01_SISTEMA_ALVO/evidencias_ambiente/2026-09-24_docker_*`):
 
 ```bash
 cd 01_SISTEMA_ALVO/saborino
-cp ../ambiente_p2/env.p2 backend/.env
-# no backend/.env: POSTGRES_HOST=db e CELERY_BROKER_URL=redis://redis:6379/0
-docker compose -f docker-compose.yml up --build
+sed -e 's/^POSTGRES_HOST=.*/POSTGRES_HOST=db/' \
+    -e 's#^CELERY_BROKER_URL=.*#CELERY_BROKER_URL=redis://redis:6379/0#' \
+    ../ambiente_p2/env.p2 > backend/.env
+docker compose -p p2tqs-saborino -f docker-compose.yml build api frontend
 ```
+
+O `-p p2tqs-saborino` dá ao ambiente do P2 um nome de projeto próprio. Sem ele, o Compose usa o nome `sistema-saborino`, e o seed (que apaga os dados operacionais) poderia cair num volume de desenvolvimento com o mesmo nome.
 
 ## 7. Configuração
 
@@ -77,6 +80,22 @@ Nenhum segredo real é versionado.
 - Para restaurar o ambiente entre execuções, rode `p2_seed` de novo (seção 9.1, item 6).
 
 ## 9. Execução
+
+Forma A, Docker (a partir de `01_SISTEMA_ALVO/saborino`):
+
+```bash
+docker compose -p p2tqs-saborino -f docker-compose.yml up -d db redis
+docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manage.py migrate --noinput
+docker compose -p p2tqs-saborino -f docker-compose.yml run --rm -v "$PWD/../ambiente_p2:/p2:ro" api python /p2/seed_ficticio.py
+docker compose -p p2tqs-saborino -f docker-compose.yml up -d api frontend   # API em :8000, frontend em :5173
+bash ../ambiente_p2/smoke_api.sh http://localhost:8000/api/v1                # smoke da API
+# encerrar (nunca com -v; o volume guarda só dados fictícios, e o seed o restaura):
+docker compose -p p2tqs-saborino -f docker-compose.yml down
+```
+
+Os serviços `celery` e `dashboard` (Flower) não são iniciados, porque o envio de e-mail está fora do escopo (seção 14).
+
+Forma B, Linux sem Docker:
 
 ```bash
 source 01_SISTEMA_ALVO/ambiente_p2/p2_linux.sh
@@ -123,6 +142,10 @@ GitHub Actions: **[a configurar na Fase 9]**.
 - O Celery e o Redis não sobem no ambiente de teste. Por isso, os fluxos de e-mail (verificação, recuperação e troca de e-mail) ficam **fora do escopo**.
 - A pasta `Documentos` do Mac está sincronizada com o iCloud. Arquivos que ficam só na nuvem precisam ser baixados antes de rodar. Recomenda-se não instalar `node_modules` nem venv dentro dela.
 - Os arquivos de implantação e operação de ambientes reais foram retirados da cópia e ficam fora do escopo dos testes.
+- **Docker no Mac, erro `docker-credential-desktop: executable file not found`:** o link `/usr/local/bin/docker-credential-desktop` pode apontar para `/Volumes/Docker/...`, que é a imagem de instalação e deixa de existir depois que ela é desmontada. Solução sem mexer no sistema: `export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"` antes dos comandos `docker compose`.
+- **Smoke test no macOS:** o `bash` padrão é o 3.2. O `smoke_api.sh` foi escrito para funcionar nele. Ao adaptar o script, não coloque aspas escapadas dentro de `$(...)`, porque isso corrompe o JSON enviado.
+- A forma A usa PostgreSQL 15.19 (imagem `postgres:15-alpine`), e a forma B usa o 15.18 embarcado. As duas são da mesma versão principal.
+- As migrações `accounts.0003_seed_socios` e `cadastros.0002_seed_inicial` fazem parte do código original e criam sócios e contas padrão. O seed fictício substitui as contas e os canais, mas os três sócios padrão continuam no banco.
 
 ## 15. Contato do grupo
 
