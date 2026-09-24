@@ -1,0 +1,19 @@
+# Frontend Vue — testes existentes (Vitest) e build — 2026-09-24T19:15:47+00:00 — Node v22.23.2
+
+ RUN  v4.1.11 /sessions/rcw-01mxezlixamllt5uu8kwtrpk/.p2_saborino/ui
+
+ ✓ src/api/tokens.test.js (1 test) 1ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:15:48
+   Duration  256ms (transform 12ms, setup 0ms, import 16ms, tests 1ms, environment 190ms)
+
+
+## vite build
+dist/assets/ProdutosView-BgERwVD-.js               3.85 kB │ gzip:  1.60 kB
+dist/assets/DashboardView-MkJIBQ-2.js              4.33 kB │ gzip:  1.65 kB
+dist/assets/ComprasView-CqLamV9u.js                4.71 kB │ gzip:  1.77 kB
+dist/assets/VendaRapidaView-A7XClAwx.js            5.56 kB │ gzip:  2.27 kB
+dist/assets/index-CHiOej1p.js                    163.07 kB │ gzip: 62.79 kB
+✓ built in 602ms
