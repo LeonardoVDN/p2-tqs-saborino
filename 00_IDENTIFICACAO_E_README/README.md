@@ -126,7 +126,7 @@ GitHub Actions: **[a configurar na Fase 9]**.
 
 | Pasta | Conteúdo |
 |---|---|
-| 00_IDENTIFICACAO_E_README | Este README, a Ficha do Apêndice A (P01) e o resumo de andamento |
+| 00_IDENTIFICACAO_E_README | Este README, a Ficha do Apêndice A (P01) e o resumo de andamento. A versão vigente é a v0.3, em PDF, gerada a partir do HTML em `fontes/`; as versões anteriores continuam no histórico |
 | 01_SISTEMA_ALVO | Código do Saborino, o ambiente P2 (`ambiente_p2/`) e as evidências de que o ambiente sobe |
 | 02 a 16 | Seguem a seção 11.3 do manual e são preenchidas conforme cada marco |
 

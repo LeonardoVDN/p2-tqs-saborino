@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>P01 · Ficha de proposta e aprovação do sistema · v0.3</title>
+<link rel="stylesheet" href="documento.css">
+</head>
+<body>
+
+<h1>P01 · Ficha de proposta e aprovação do sistema</h1>
+<p class="subtitulo">Apêndice A do manual · Marco 1 (Fundamentos) · versão 0.3</p>
+
+<table class="meta">
+  <tr><td>Disciplina</td><td>Testes e Qualidade de Software · Ciência da Computação · Unisagrado 2026</td></tr>
+  <tr><td>Professor</td><td>Prof. Dr. Elvio Gilberto da Silva</td></tr>
+  <tr><td>Turma e grupo</td><td>CC · Grupo 13</td></tr>
+  <tr><td>Integrantes</td><td>Leonardo Valentim, Natasha Teixeira e Udymilla Chagas (composição preliminar)</td></tr>
+  <tr><td>Data</td><td>24/09/2026</td></tr>
+  <tr><td>Repositório</td><td>github.com/LeonardoVDN/P2_TQS_2026_CC_GRUPO13_SABORINO</td></tr>
+</table>
+
+<h2>1. Escolha do grupo</h2>
+<p>Opção 1, <strong>Sistema Saborino</strong>. A Opção 2 (GreenOps Profiler) foi avaliada e descartada porque não atende à seção 5.3: não tem interface web nem formulários suficientes.</p>
+
+<h2>2. Verificação dos requisitos mínimos (seção 5.3)</h2>
+<table class="dados">
+  <thead><tr><th>Requisito mínimo</th><th>Saborino</th><th>GreenOps</th></tr></thead>
+  <tbody>
+    <tr><td>Código-fonte disponível</td><td>Sim</td><td>Sim</td></tr>
+    <tr><td>Roda em ambiente local ou de teste</td><td>Sim (Docker no macOS e Linux sem Docker, verificados em 24/09/2026)</td><td>Sim (linha de comando)</td></tr>
+    <tr><td>4 ou mais fluxos, com 2 ou mais formulários</td><td>Sim (7 fluxos, 5 formulários)</td><td>Não</td></tr>
+    <tr><td>Persistência de dados</td><td>Sim (PostgreSQL)</td><td>Parcial (arquivos de resultado)</td></tr>
+    <tr><td>Integração entre componentes</td><td>Sim (Vue ↔ API ↔ banco)</td><td>Só entre módulos internos</td></tr>
+    <tr><td>Dados fictícios e testes repetíveis</td><td>Sim (seed idempotente)</td><td>Sim</td></tr>
+    <tr><td>Disponível durante o semestre</td><td>Sim</td><td>Sim</td></tr>
+    <tr><td>Instruções de instalação</td><td>Sim (README do grupo, no repositório)</td><td>Sim</td></tr>
+  </tbody>
+</table>
+
+<h2 class="nova-pagina">3. Opção 1: Sistema Saborino (escolhida)</h2>
+<table class="campos">
+  <tr><td>Nome do sistema</td><td>Sistema Saborino: gestão de uma pequena produção de alimentos (release <code>a63a24f</code>)</td></tr>
+  <tr><td>Origem do sistema</td><td>Desenvolvido anteriormente por um integrante, Leonardo Valentim (seção 5.2). Os testes usam somente uma cópia local, com banco próprio e dados fictícios.</td></tr>
+  <tr><td>Link do repositório</td><td>https://github.com/LeonardoVDN/P2_TQS_2026_CC_GRUPO13_SABORINO (público). O código fica em <code>01_SISTEMA_ALVO/saborino</code>.</td></tr>
+  <tr><td>Licença/autorização</td><td>O código é de autoria do integrante, que autoriza o uso acadêmico e as alterações de TDD. A cópia publicada foi anonimizada, e os desvios da release estão em <code>01_SISTEMA_ALVO/DESVIOS_DA_RELEASE.md</code>. Os dados são somente fictícios.</td></tr>
+  <tr><td>Tecnologias principais</td><td>Python 3.12, Django 5.2, Django REST Framework, PostgreSQL 15, Vue 3 com Vite, Pinia e Axios, autenticação por sessão (cookie e CSRF), Celery e Redis (só para e-mail)</td></tr>
+  <tr><td>Como executar</td><td>Docker (forma A): <code>docker compose -p p2tqs-saborino</code> sobe banco, API (:8000) e frontend (:5173), depois roda migrate e o seed fictício. Linux sem Docker (forma B): script <code>ambiente_p2/p2_linux.sh</code>. Os passos completos estão no README da pasta 00.</td></tr>
+  <tr><td>Fluxos selecionados (preliminar)</td><td>
+    <ul>
+      <li>F1 Autenticação: login e logout por sessão</li>
+      <li>F2 Cadastro de clientes: nome, canal, contato e forma de pagamento</li>
+      <li>F3 Cadastro de produtos: preço, custo, categoria e unidade</li>
+      <li>F4 Registro de venda: itens, cálculo do total e geração do recebível</li>
+      <li>F5 Recebimento: pagamento parcial ou total que abate recebíveis</li>
+      <li>F6 Compras e produção: lançamento de insumos com rateio por produto</li>
+      <li>F7 Relatórios: painel e fechamento mensal</li>
+    </ul></td></tr>
+  <tr><td>Integrações existentes</td><td>Frontend Vue ↔ API REST (Axios, JSON, sessão e CSRF); API ↔ PostgreSQL (ORM do Django); integração entre módulos (Venda → Recebível → Pagamento/Alocação → Relatórios); API ↔ Celery/Redis ↔ provedor de e-mail (fora do escopo)</td></tr>
+  <tr><td>Justificativa da escolha</td><td>Atende a todos os itens da seção 5.3, com 7 fluxos e 5 formulários. O grupo tem acesso total ao código e conhece o domínio. As regras de cálculo (totais, saldos, status) servem bem para valor limite e partição de equivalência. A API REST permite usar o Postman, e a interface web permite usar o Selenium. Já existe uma suíte de 69 testes para comparar com os testes do grupo.</td></tr>
+  <tr><td>Riscos de viabilidade</td><td>
+    <ul>
+      <li>Risco de afetar dados reais: mitigado com uma cópia local isolada, banco próprio e dados fictícios.</li>
+      <li>O e-mail depende de Celery, Redis e um provedor externo: esses fluxos ficam fora do escopo.</li>
+      <li>O sistema é maior que o necessário: o escopo fica restrito aos fluxos F1 a F7.</li>
+      <li>A linguagem não é Java: pedimos autorização para usar pytest no lugar do JUnit (seção 8.3).</li>
+    </ul></td></tr>
+  <tr><td>Decisão do professor</td><td>Aprovado &nbsp;/&nbsp; Aprovado com ajustes &nbsp;/&nbsp; Não aprovado</td></tr>
+  <tr><td>Ajustes solicitados</td><td class="linha-preencher">&nbsp;</td></tr>
+  <tr><td>Data da aprovação</td><td class="linha-preencher">&nbsp;</td></tr>
+</table>
+
+<h2>4. Classificação preliminar dos níveis de teste</h2>
+<table class="dados">
+  <thead><tr><th class="col-curta">Nível / tipo</th><th>Finalidade no Saborino</th><th>Ferramenta prevista</th></tr></thead>
+  <tbody>
+    <tr><td>Unitário</td><td>Regras isoladas: arredondamento monetário, subtotal do item, total da venda, status do recebível (Aberto, Parcial, Pago, Vencido) e competência derivada da data</td><td>pytest e pytest-django</td></tr>
+    <tr><td>Integração / API</td><td>Cliente ↔ API ↔ banco: autenticação, cadastro de clientes e produtos, venda gerando recebível, pagamento abatendo saldo, respostas 2xx, 4xx e 401</td><td>Postman e Newman</td></tr>
+    <tr><td>Sistema / interface</td><td>Fluxos ponta a ponta pela interface: login, cadastro de cliente, venda rápida e recebimento</td><td>Selenium WebDriver (Python)</td></tr>
+    <tr><td>Aceitação</td><td>4 cenários do ponto de vista do usuário gestor, executados por uma pessoa externa</td><td>Roteiro e registro (Aceito, Aceito com ressalvas ou Não aceito)</td></tr>
+    <tr><td>Não funcionais</td><td>Desempenho básico, compatibilidade (2 navegadores e resoluções), segurança básica e confiabilidade (reinício controlado)</td><td>Scripts de medição, Selenium e navegador</td></tr>
+  </tbody>
+</table>
+<p class="nota">Justificativa da estratégia: as regras de cálculo concentram o maior risco de erro silencioso (valores e saldos errados). Por isso, a base da pirâmide são os testes unitários dessas regras. A API é a fronteira principal entre os componentes e recebe os testes de integração. Os fluxos que o usuário mais repete (venda e recebimento) recebem os testes de sistema e de aceitação.</p>
+
+<h2>5. Opção 2: GreenOps Profiler (descartada)</h2>
+<table class="campos">
+  <tr><td>Nome do sistema</td><td>GreenOps Profiler: protótipo que compara o consumo de energia entre versões de funções de backend</td></tr>
+  <tr><td>Origem do sistema</td><td>Sistema acadêmico em desenvolvimento pelo grupo (TCC dos mesmos integrantes)</td></tr>
+  <tr><td>Link do repositório</td><td>Não publicado</td></tr>
+  <tr><td>Licença/autorização</td><td>Código de autoria do grupo</td></tr>
+  <tr><td>Tecnologias principais</td><td>Python 3.11+, numpy, scipy e pytest. Há um backend Django de apoio, usado só como alvo das medições.</td></tr>
+  <tr><td>Como executar</td><td>Linha de comando (<code>cd sandbox; ./run.sh</code>). Não tem interface web para o usuário final.</td></tr>
+  <tr><td>Fluxos selecionados (preliminar)</td><td>Comparação de variantes pela linha de comando, autoteste A/A e geração de relatório em texto</td></tr>
+  <tr><td>Integrações existentes</td><td>Entre módulos internos (runner, stats, report) e com a fonte de energia (RAPL ou simulada)</td></tr>
+  <tr><td>Justificativa da escolha</td><td>O grupo domina o código, e ele tem muita lógica testável por unidade.</td></tr>
+  <tr><td>Riscos de viabilidade</td><td>
+    <ul>
+      <li>Não atende à seção 5.3: faltam interface web e ao menos 2 formulários, o que inviabiliza Selenium e Postman.</li>
+      <li>A medição por RAPL não existe no hardware disponível (Apple Silicon).</li>
+      <li>Mistura a avaliação da P2 com o TCC.</li>
+    </ul></td></tr>
+  <tr><td>Decisão do professor</td><td>Aprovado &nbsp;/&nbsp; Aprovado com ajustes &nbsp;/&nbsp; Não aprovado</td></tr>
+  <tr><td>Ajustes solicitados</td><td class="linha-preencher">&nbsp;</td></tr>
+  <tr><td>Data da aprovação</td><td class="linha-preencher">&nbsp;</td></tr>
+</table>
+
+<h2>6. Evidências anexas</h2>
+<p>Execuções reais, com a saída gravada em <code>01_SISTEMA_ALVO/evidencias_ambiente/</code>:</p>
+<table class="dados">
+  <thead><tr><th>Arquivo</th><th>Resultado</th></tr></thead>
+  <tbody>
+    <tr><td><code class="arquivo">2026-09-24_suite_existente_django.txt</code></td><td>69 testes do backend, OK (Linux, PostgreSQL 15.18)</td></tr>
+    <tr><td><code class="arquivo">2026-09-24_smoke_api.txt</code></td><td>Login (204/401), clientes (200/201/400), painel (200) e acesso sem login (401)</td></tr>
+    <tr><td><code class="arquivo">2026-09-24_frontend_vitest_build.txt</code></td><td>Vitest (1 teste, OK) e build do Vue concluído</td></tr>
+    <tr><td><code class="arquivo">2026-09-24_docker_migrate_seed.txt</code></td><td>Docker no macOS: 45 migrações aplicadas e seed fictício (3 clientes, 3 produtos, 2 vendas)</td></tr>
+    <tr><td><code class="arquivo">2026-09-24_docker_validacao_codigo_anonimizado.txt</code></td><td>Após a anonimização: 69 testes OK, smoke com os mesmos 9 resultados, Vitest e build OK</td></tr>
+  </tbody>
+</table>
+
+<div class="assinaturas">
+  <div class="assinatura">Prof. Dr. Elvio Gilberto da Silva — Decisão sobre a proposta</div>
+  <p class="local">Bauru, ______ de ____________________ de __________</p>
+</div>
+
+<div class="rodape">
+  <strong>P2_TQS_2026_CC_GRUPO13_SABORINO</strong><br>
+  Leonardo Valentim · Natasha Teixeira · Udymilla Chagas &nbsp;·&nbsp; github.com/LeonardoVDN/P2_TQS_2026_CC_GRUPO13_SABORINO
+</div>
+
+</body>
+</html>

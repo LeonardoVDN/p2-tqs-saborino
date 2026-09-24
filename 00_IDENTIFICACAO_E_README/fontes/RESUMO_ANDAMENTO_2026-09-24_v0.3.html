@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Resumo de andamento · Projeto Integrado P2 · v0.3</title>
+<link rel="stylesheet" href="documento.css">
+</head>
+<body>
+
+<h1>Resumo de andamento · Projeto Integrado P2</h1>
+<p class="subtitulo">Marco 1 (Fundamentos) · situação em 24/09/2026 · versão 0.3</p>
+
+<table class="meta">
+  <tr><td>Disciplina</td><td>Testes e Qualidade de Software · Ciência da Computação · Unisagrado 2026</td></tr>
+  <tr><td>Professor</td><td>Prof. Dr. Elvio Gilberto da Silva</td></tr>
+  <tr><td>Turma e grupo</td><td>CC · Grupo 13</td></tr>
+  <tr><td>Integrantes</td><td>Leonardo Valentim, Natasha Teixeira e Udymilla Chagas</td></tr>
+  <tr><td>Sistema escolhido</td><td>Sistema Saborino (aguardando aprovação)</td></tr>
+  <tr><td>Repositório</td><td>github.com/LeonardoVDN/P2_TQS_2026_CC_GRUPO13_SABORINO</td></tr>
+</table>
+
+<h2>1. Sistema escolhido</h2>
+<p>Sistema web de gestão de uma pequena produção de alimentos, desenvolvido anteriormente por um integrante. Usa Django REST Framework e PostgreSQL no backend e Vue 3 no frontend. Cobre clientes, produtos, vendas, recebíveis (fiado), pagamentos, compras, produção e fechamento mensal. Os testes usam somente uma cópia local, com banco próprio e dados fictícios.</p>
+<p>A 2ª opção avaliada foi o GreenOps Profiler (TCC do grupo), descartada por não ter interface web nem formulários suficientes (seção 5.3). A comparação completa está na Ficha do Apêndice A (P01).</p>
+
+<h2>2. O que está pronto</h2>
+<ul>
+  <li><strong>Estrutura:</strong> pasta P2_TQS_2026_CC_GRUPO13_SABORINO com as 17 subpastas da seção 11.3.</li>
+  <li><strong>Repositório público no GitHub</strong>, com histórico de commits pequenos e descritivos. Antes da publicação, a cópia do sistema foi anonimizada: saíram os arquivos de implantação e os dados padrão que identificavam o uso real. Os desvios estão registrados no repositório.</li>
+  <li><strong>Sistema rodando localmente</strong> de duas formas, com instruções no README: Docker (validado no macOS) e Linux sem Docker. A massa de dados fictícia é idempotente e restaura o mesmo estado a cada execução.</li>
+  <li><strong>Linha de base executada</strong>, com a saída de cada execução gravada como evidência (tabela abaixo).</li>
+  <li><strong>Documentos:</strong> README da pasta 00 (seção 11.4), Ficha do Apêndice A com as 2 opções e a classificação preliminar dos níveis de teste, e Diário de Participação.</li>
+</ul>
+
+<table class="dados">
+  <thead><tr><th>Verificação</th><th>Ambiente</th><th class="num">Resultado</th></tr></thead>
+  <tbody>
+    <tr><td>Suíte existente do backend (Django TestCase)</td><td>Linux e Docker</td><td class="num">69 de 69 OK</td></tr>
+    <tr><td>Suíte existente do frontend (Vitest)</td><td>Linux e Docker</td><td class="num">1 de 1 OK</td></tr>
+    <tr><td>Build do frontend (Vite)</td><td>Linux e Docker</td><td class="num">Concluído</td></tr>
+    <tr><td>Migrações do banco num banco novo</td><td>Docker</td><td class="num">45 aplicadas</td></tr>
+    <tr><td>Smoke test da API (login, clientes, painel, acesso sem login)</td><td>Linux e Docker</td><td class="num">9 de 9 como esperado</td></tr>
+  </tbody>
+</table>
+<p class="nota">Depois da anonimização, a suíte do backend, as migrações, o seed, o smoke test, o Vitest e o build foram executados de novo, e os resultados foram os mesmos.</p>
+
+<h2>3. Fluxos no escopo preliminar</h2>
+<table class="dados">
+  <thead><tr><th class="col-curta">Fluxo</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>F1</td><td>Autenticação: login e logout por sessão</td></tr>
+    <tr><td>F2</td><td>Cadastro de clientes</td></tr>
+    <tr><td>F3</td><td>Cadastro de produtos</td></tr>
+    <tr><td>F4</td><td>Registro de venda com itens, que gera o recebível</td></tr>
+    <tr><td>F5</td><td>Recebimento parcial ou total</td></tr>
+    <tr><td>F6</td><td>Compras e produção</td></tr>
+    <tr><td>F7</td><td>Relatórios e fechamento mensal</td></tr>
+  </tbody>
+</table>
+<p class="nota">Ficam fora do escopo os fluxos de e-mail (Celery, Redis e provedor externo) e a implantação.</p>
+
+<h2>4. Próximos passos</h2>
+<ul>
+  <li><strong>Marco 2:</strong> catálogo de 8 ou mais requisitos (6 RF e 2 RNF) com critérios verificáveis, matriz de 8 riscos e plano de testes (Apêndice D).</li>
+  <li><strong>Marco 3:</strong> 24 ou mais casos de teste com partição de equivalência e valor limite (por exemplo, quantidade e preço do item, valor do pagamento em relação ao saldo) e matriz de rastreabilidade.</li>
+  <li><strong>Ferramentas:</strong> abrir o GitHub Issues para os defeitos e configurar o SonarCloud para a análise de linha de base.</li>
+</ul>
+
+<h2>5. Dúvidas para o professor</h2>
+<ul>
+  <li>O sistema é em Python: podemos usar pytest e pytest-django no lugar do JUnit (seção 8.3)?</li>
+  <li>O pipeline pode ser no GitHub Actions? E a análise de qualidade pode ser no SonarCloud, em vez de um SonarQube local?</li>
+  <li>Testar o Saborino apenas numa cópia local, com banco próprio e dados fictícios, atende às seções 5.3 e 5.4?</li>
+  <li>A composição do grupo (trio) está confirmada? E a pasta do Drive já está disponível?</li>
+</ul>
+
+<div class="rodape">
+  <strong>P2_TQS_2026_CC_GRUPO13_SABORINO</strong><br>
+  Leonardo Valentim · Natasha Teixeira · Udymilla Chagas &nbsp;·&nbsp; github.com/LeonardoVDN/P2_TQS_2026_CC_GRUPO13_SABORINO
+</div>
+
+</body>
+</html>
