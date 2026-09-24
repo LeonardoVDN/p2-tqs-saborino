@@ -25,7 +25,7 @@ Turma: CC. Grupo: 13. A composição é **preliminar**: "por enquanto", conforme
 
 ## 3. Link do repositório
 
-- GitHub: **[a criar]**. O repositório será aberto pelo grupo, e o link entra aqui.
+- GitHub: https://github.com/LeonardoVDN/P2_TQS_2026_CC_GRUPO13_SABORINO (público; branch `main`). Publicado em 24/09/2026, depois da anonimização.
 
 ## 4. Tecnologias
 
