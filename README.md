@@ -4,23 +4,23 @@ Projeto da disciplina de Testes e Qualidade de Software da Unisagrado (2026), co
 Integrantes: Leonardo Valentim, Natasha Teixeira e Udymilla Chagas.
 
 O sistema testado é o **Saborino**, um sistema web de gestão de uma pequena produção de alimentos
-(Django REST Framework, PostgreSQL 15 e Vue 3). O código está em `01_SISTEMA_ALVO/saborino`.
+(Django REST Framework, PostgreSQL 15 e Vue 3). O código está em `sistema/saborino`.
 Os arquivos de implantação foram retirados e os cadastros padrão usam nomes genéricos.
 
 ## Como rodar (Docker)
 
 ```bash
-cd 01_SISTEMA_ALVO/saborino
-cp ../ambiente_p2/env.p2 backend/.env
+cd sistema/saborino
+cp ../ambiente/env.teste backend/.env
 sed -i '' 's/^POSTGRES_HOST=.*/POSTGRES_HOST=db/; s#^CELERY_BROKER_URL=.*#CELERY_BROKER_URL=redis://redis:6379/0#' backend/.env
 
 docker compose -p p2tqs-saborino -f docker-compose.yml up -d db redis
 docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manage.py migrate
-docker compose -p p2tqs-saborino -f docker-compose.yml run --rm -v "$PWD/../ambiente_p2:/p2:ro" api python /p2/seed_ficticio.py
-docker compose -p p2tqs-saborino -f docker-compose.yml -f ../ambiente_p2/docker-compose.p2.yml up -d api frontend
+docker compose -p p2tqs-saborino -f docker-compose.yml run --rm -v "$PWD/../ambiente:/p2:ro" api python /p2/seed.py
+docker compose -p p2tqs-saborino -f docker-compose.yml -f ../ambiente/docker-compose.teste.yml up -d api frontend
 ```
 
-O arquivo `docker-compose.p2.yml` liga o `CORS_ALLOW_CREDENTIALS` só no ambiente de teste. Sem ele, o frontend abre em branco porque o navegador bloqueia as chamadas à API.
+O arquivo `docker-compose.teste.yml` liga o `CORS_ALLOW_CREDENTIALS` só no ambiente de teste. Sem ele, o frontend abre em branco porque o navegador bloqueia as chamadas à API.
 
 - Frontend: http://localhost:5173
 - API: http://localhost:8000/api/v1
@@ -32,7 +32,7 @@ O seed apaga os dados de teste e recria sempre o mesmo estado inicial. Para para
 
 ```bash
 docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manage.py test   # suíte existente do backend
-bash ../ambiente_p2/smoke_api.sh                                                            # verificação rápida da API
+bash ../ambiente/smoke.sh                                                            # verificação rápida da API
 ```
 
 Os testes do grupo (unitários, API com Postman e interface com Selenium) entram nas próximas etapas.

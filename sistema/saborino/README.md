@@ -6,7 +6,7 @@ pagamentos, compras, produção e fechamento mensal.
 Esta é a cópia usada como objeto de teste no Projeto P2 de Testes e Qualidade de Software. Os arquivos
 de implantação e operação de ambientes reais foram retirados, e os dados padrão das migrações foram
 trocados por valores neutros. As instruções completas de instalação, execução e teste do ambiente
-do P2 estão em `00_IDENTIFICACAO_E_README/README.md`.
+do P2 estão em `identificacao/README.md`.
 
 ## Tecnologias
 

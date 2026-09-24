@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Smoke test da API do Saborino no ambiente P2 (TQS 2026). Só leituras e um cadastro fictício.
-# Uso: bash smoke_api.sh [URL_BASE]   (padrão: http://localhost:8000/api/v1)
+# Uso: bash smoke.sh [URL_BASE]   (padrão: http://localhost:8000/api/v1)
 # Na forma B (Linux sem Docker), use http://127.0.0.1:8010/api/v1. Requer curl e python3.
 set -u
 BASE="${1:-http://localhost:8000/api/v1}"

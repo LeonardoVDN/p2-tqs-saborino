@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Ambiente de teste do P2 em Linux SEM Docker (usado nas execuções automatizadas).
 # PostgreSQL 15 embarcado (pacote npm @embedded-postgres) + Python 3.12 (uv).
-# Uso: source p2_linux.sh && p2_pg_start && p2_migrate && p2_seed ... && p2_pg_stop
-set -a; source "$(dirname "${BASH_SOURCE[0]}")/env.p2"; set +a
+# Uso: source linux.sh && p2_pg_start && p2_migrate && p2_seed ... && p2_pg_stop
+set -a; source "$(dirname "${BASH_SOURCE[0]}")/env.teste"; set +a
 P2_AMB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 P2_BACKEND="$P2_AMB/../saborino/backend"
 P2_HOME="${P2_HOME:-$HOME/.p2_saborino}"
@@ -17,7 +17,7 @@ p2_install() {
   export PATH="$HOME/.local/bin:$PATH"
   [ -x "$P2_PY" ] || { uv python install 3.12 && uv venv -q -p 3.12 "$P2_HOME/venv"; }
   VIRTUAL_ENV="$P2_HOME/venv" uv pip install -q -r "$P2_BACKEND/requirements.txt"
-  VIRTUAL_ENV="$P2_HOME/venv" uv pip install -q -r "$P2_AMB/requirements-testes.txt"
+  VIRTUAL_ENV="$P2_HOME/venv" uv pip install -q -r "$P2_AMB/requirements.txt"
   local pkg=linux-arm64; [ "$(uname -m)" = "x86_64" ] && pkg=linux-x64
   [ -x "$PG_BIN/bin/postgres" ] || (cd "$P2_HOME/pg" && npm install -s --no-audit --no-fund "@embedded-postgres/$pkg@15.18.0-beta.17")
 }
@@ -37,6 +37,6 @@ PY
 p2_pg_stop() { "$PG_BIN/bin/pg_ctl" -D "$P2_HOME/pgdata" -m fast stop >/dev/null; }
 p2_manage() { (cd "$P2_BACKEND" && "$P2_PY" manage.py "$@"); }
 p2_migrate() { p2_manage migrate --noinput; }
-p2_seed() { (cd "$P2_BACKEND" && "$P2_PY" "$P2_AMB/seed_ficticio.py"); }
+p2_seed() { (cd "$P2_BACKEND" && "$P2_PY" "$P2_AMB/seed.py"); }
 p2_serve() { (cd "$P2_BACKEND" && nohup "$P2_PY" manage.py runserver 127.0.0.1:8010 --noreload > "$P2_HOME/api.log" 2>&1 & echo $! > "$P2_HOME/api.pid"); sleep 4; }
 p2_serve_stop() { [ -f "$P2_HOME/api.pid" ] && kill "$(cat "$P2_HOME/api.pid")" 2>/dev/null; rm -f "$P2_HOME/api.pid"; }

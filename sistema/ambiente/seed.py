@@ -1,7 +1,7 @@
 """Massa de dados FICTÍCIA do Projeto P2 (TQS 2026).
 
-Uso (a partir de 01_SISTEMA_ALVO/saborino/backend, com o env.p2 carregado):
-    python ../../ambiente_p2/seed_ficticio.py
+Uso (a partir de sistema/saborino/backend, com o env.teste carregado):
+    python ../../ambiente/seed.py
 
 Idempotente: apaga os dados operacionais e recria sempre o mesmo estado inicial,
 para que os testes possam ser repetidos (seção 9.1, item 6 do manual).

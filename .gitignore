@@ -3,10 +3,10 @@
 /*
 !/.gitignore
 !/README.md
-!/01_SISTEMA_ALVO/
-/01_SISTEMA_ALVO/*
-!/01_SISTEMA_ALVO/saborino/
-!/01_SISTEMA_ALVO/ambiente_p2/
+!/sistema/
+/sistema/*
+!/sistema/saborino/
+!/sistema/ambiente/
 
 __pycache__/
 *.pyc
