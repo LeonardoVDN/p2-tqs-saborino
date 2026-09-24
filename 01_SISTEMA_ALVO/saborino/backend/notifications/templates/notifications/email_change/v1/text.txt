@@ -1,0 +1,5 @@
+Foi solicitada a troca do e-mail da sua conta Saborino para este endereço.
+
+Confirme pelo link: {{ link }}
+
+O endereço atual continuará válido até a confirmação.

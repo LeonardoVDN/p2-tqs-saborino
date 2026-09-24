@@ -1,0 +1,5 @@
+Recebemos um pedido para redefinir sua senha no Saborino.
+
+Continue pelo link: {{ link }}
+
+Se você não fez esse pedido, ignore esta mensagem.

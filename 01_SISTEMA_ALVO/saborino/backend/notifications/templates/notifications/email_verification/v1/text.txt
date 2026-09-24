@@ -1,0 +1,5 @@
+Confirme que este é o e-mail da sua conta Saborino.
+
+Continue pelo link: {{ link }}
+
+Se você não pediu esta confirmação, ignore a mensagem.
