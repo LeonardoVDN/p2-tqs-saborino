@@ -1,0 +1,97 @@
+# Saborino via Docker (forma A do README) no Mac: subida do banco, migrate e seed fictício
+# Data: 2026-09-24T16:35:42-03:00 | Host: macOS 27.0 arm64 | Docker version 28.5.1, build e180ab8 | Docker Compose version v2.40.3-desktop.1
+# Projeto compose: p2tqs-saborino | Docker Desktop: 1 CPU, 1017626624 bytes de memória
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml up -d db redis
+ Network p2tqs-saborino_default  Creating
+ Network p2tqs-saborino_default  Created
+ Volume p2tqs-saborino_postgres_data  Creating
+ Volume p2tqs-saborino_postgres_data  Created
+ Volume p2tqs-saborino_redis_data  Creating
+ Volume p2tqs-saborino_redis_data  Created
+ Container p2tqs-saborino-db-1  Creating
+ Container p2tqs-saborino-redis-1  Creating
+ Container p2tqs-saborino-redis-1  Created
+ Container p2tqs-saborino-db-1  Created
+ Container p2tqs-saborino-db-1  Starting
+ Container p2tqs-saborino-redis-1  Starting
+ Container p2tqs-saborino-redis-1  Started
+ Container p2tqs-saborino-db-1  Started
+
+## aguardando o PostgreSQL aceitar conexões
+/var/run/postgresql:5432 - no response
+/var/run/postgresql:5432 - accepting connections
+PostgreSQL 15.19 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manage.py migrate --noinput
+ Container p2tqs-saborino-db-1  Running
+ Container p2tqs-saborino-redis-1  Running
+Operations to perform:
+  Apply all migrations: accounts, admin, auth, cadastros, contenttypes, notifications, operacao, rest_framework_api_key, sessions, token_blacklist
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying accounts.0001_initial... OK
+  Applying accounts.0002_socio... OK
+  Applying accounts.0003_seed_socios... OK
+  Applying accounts.0004_identity_session_fields... OK
+  Applying accounts.0005_account_actions... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying cadastros.0001_initial... OK
+  Applying cadastros.0002_seed_inicial... OK
+  Applying notifications.0001_initial... OK
+  Applying notifications.0002_outbox_budget_reservation... OK
+  Applying operacao.0001_initial... OK
+  Applying rest_framework_api_key.0001_initial... OK
+  Applying rest_framework_api_key.0002_auto_20190529_2243... OK
+  Applying rest_framework_api_key.0003_auto_20190623_1952... OK
+  Applying rest_framework_api_key.0004_prefix_hashed_key... OK
+  Applying rest_framework_api_key.0005_auto_20220110_1102... OK
+  Applying sessions.0001_initial... OK
+  Applying token_blacklist.0001_initial... OK
+  Applying token_blacklist.0002_outstandingtoken_jti_hex... OK
+  Applying token_blacklist.0003_auto_20171017_2007... OK
+  Applying token_blacklist.0004_auto_20171017_2013... OK
+  Applying token_blacklist.0005_remove_outstandingtoken_jti... OK
+  Applying token_blacklist.0006_auto_20171017_2113... OK
+  Applying token_blacklist.0007_auto_20171017_2214... OK
+  Applying token_blacklist.0008_migrate_to_bigautofield... OK
+  Applying token_blacklist.0010_fix_migrate_to_bigautofield... OK
+  Applying token_blacklist.0011_linearizes_history... OK
+  Applying token_blacklist.0012_alter_outstandingtoken_user... OK
+  Applying token_blacklist.0013_alter_blacklistedtoken_options_and_more... OK
+exit=0
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml run --rm -v "$PWD/../ambiente_p2:/p2:ro" api python /p2/seed_ficticio.py
+ Container p2tqs-saborino-db-1  Running
+ Container p2tqs-saborino-redis-1  Running
+Seed fictício aplicado:
+  usuário: tester@saborino.test / senha: SenhaFicticia-P2-2026
+  clientes=3 produtos=3 vendas=2 recebíveis=2 pagamentos=1 compras=1
+exit=0
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manage.py showmigrations --list  (resumo por app)
+accounts: aplicadas=5 pendentes=0
+admin: aplicadas=3 pendentes=0
+auth: aplicadas=12 pendentes=0
+cadastros: aplicadas=2 pendentes=0
+contenttypes: aplicadas=2 pendentes=0
+notifications: aplicadas=2 pendentes=0
+operacao: aplicadas=1 pendentes=0
+rest_framework_api_key: aplicadas=5 pendentes=0
+sessions: aplicadas=1 pendentes=0
+token_blacklist: aplicadas=12 pendentes=0

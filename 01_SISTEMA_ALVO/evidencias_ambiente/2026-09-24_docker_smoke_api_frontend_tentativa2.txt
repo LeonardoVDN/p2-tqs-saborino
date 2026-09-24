@@ -1,0 +1,69 @@
+# Saborino via Docker no Mac: smoke da API e da tela inicial, 2ª tentativa — 2026-09-24T16:37:50-03:00
+# A 1ª tentativa falhou por defeito do próprio script de smoke (aspas no bash 3.2 do macOS), não do sistema.
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml run --rm -v "$PWD/../ambiente_p2:/p2:ro" api python /p2/seed_ficticio.py   (restaura o estado inicial)
+ Container p2tqs-saborino-redis-1  Running
+ Container p2tqs-saborino-db-1  Running
+Seed fictício aplicado:
+  usuário: tester@saborino.test / senha: SenhaFicticia-P2-2026
+  clientes=3 produtos=3 vendas=2 recebíveis=2 pagamentos=1 compras=1
+exit=0
+
+## $ bash ../ambiente_p2/smoke_api.sh http://localhost:8000/api/v1
+# Smoke test da API do Saborino no ambiente P2 — 2026-09-24T16:37:52-03:00 — http://localhost:8000/api/v1
+GET /auth/csrf/ -> 200
+POST /auth/sessions/ (senha errada) -> 401
+POST /auth/sessions/ (válida) -> 204
+GET /me/ -> 200 {"id":1,"username":"tester","email":"tester@saborino.test","email_verified_at":"2026-09-24T16:37:51.434454-03:00","date_joined":"2026-09-24T16:35:49.407565-03:0
+GET /clientes/ -> 200 itens: 3
+POST /clientes/ válido -> 201
+POST /clientes/ nome vazio -> 400 {"nome":["Este campo pode não estar em branco."]}
+GET /relatorios/dashboard/ -> 200
+GET /clientes/ sem login -> 401
+
+## $ curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/  e conteúdo relevante
+HTTP 200
+<title>Saborino</title>
+<div id="app"></div>
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml ps
+SERVICE    IMAGE                     STATUS              PORTS
+api        p2tqs-saborino-api        Up About a minute   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+db         postgres:15-alpine        Up 2 minutes        5432/tcp
+frontend   p2tqs-saborino-frontend   Up About a minute   0.0.0.0:5173->5173/tcp, [::]:5173->5173/tcp
+redis      redis:7-alpine            Up 2 minutes        6379/tcp
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml logs --tail 12 api
+[24/Sep/2026 16:37:52] "GET /api/v1/auth/csrf/ HTTP/1.1" 200 80
+Unauthorized: /api/v1/auth/sessions/
+[24/Sep/2026 16:37:52] "POST /api/v1/auth/sessions/ HTTP/1.1" 401 40
+[24/Sep/2026 16:37:52] "POST /api/v1/auth/sessions/ HTTP/1.1" 204 0
+[24/Sep/2026 16:37:52] "GET /api/v1/me/ HTTP/1.1" 200 163
+[24/Sep/2026 16:37:52] "GET /api/v1/clientes/ HTTP/1.1" 200 492
+[24/Sep/2026 16:37:52] "POST /api/v1/clientes/ HTTP/1.1" 201 146
+Bad Request: /api/v1/clientes/
+[24/Sep/2026 16:37:52] "POST /api/v1/clientes/ HTTP/1.1" 400 50
+[24/Sep/2026 16:37:52] "GET /api/v1/relatorios/dashboard/ HTTP/1.1" 200 957
+Unauthorized: /api/v1/clientes/
+[24/Sep/2026 16:37:52] "GET /api/v1/clientes/ HTTP/1.1" 401 68
+
+## $ docker compose -p p2tqs-saborino -f docker-compose.yml down   (sem -v: o volume de dados fictícios é mantido)
+ Container p2tqs-saborino-frontend-1  Stopping
+ Container p2tqs-saborino-frontend-1  Stopped
+ Container p2tqs-saborino-frontend-1  Removing
+ Container p2tqs-saborino-frontend-1  Removed
+ Container p2tqs-saborino-api-1  Stopping
+ Container p2tqs-saborino-api-1  Stopped
+ Container p2tqs-saborino-api-1  Removing
+ Container p2tqs-saborino-api-1  Removed
+ Container p2tqs-saborino-db-1  Stopping
+ Container p2tqs-saborino-redis-1  Stopping
+ Container p2tqs-saborino-redis-1  Stopped
+ Container p2tqs-saborino-redis-1  Removing
+ Container p2tqs-saborino-redis-1  Removed
+ Container p2tqs-saborino-db-1  Stopped
+ Container p2tqs-saborino-db-1  Removing
+ Container p2tqs-saborino-db-1  Removed
+ Network p2tqs-saborino_default  Removing
+ Network p2tqs-saborino_default  Removed
+exit=0
