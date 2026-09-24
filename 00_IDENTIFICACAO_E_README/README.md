@@ -56,11 +56,12 @@ source p2_linux.sh
 p2_install        # Python 3.12 + dependências + PostgreSQL 15 embarcado (em ~/.p2_saborino)
 ```
 
-Forma A, Docker:
+Forma A, Docker (macOS com Docker Desktop; ainda não executada pelo grupo):
 
 ```bash
 cd 01_SISTEMA_ALVO/saborino
-cp ../ambiente_p2/env.p2 backend/.env     # troque POSTGRES_HOST para "db"
+cp ../ambiente_p2/env.p2 backend/.env
+# no backend/.env: POSTGRES_HOST=db e CELERY_BROKER_URL=redis://redis:6379/0
 docker compose -f docker-compose.yml up --build
 ```
 
