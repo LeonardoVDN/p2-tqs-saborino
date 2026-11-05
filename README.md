@@ -1,7 +1,7 @@
 # P2 · Testes e Qualidade de Software · Grupo 13 (CC)
 
 Projeto da disciplina de Testes e Qualidade de Software da Unisagrado (2026), com o Prof. Dr. Elvio Gilberto da Silva.
-Integrantes: Leonardo Valentim, Natasha Teixeira e Udymilla Chagas.
+Integrantes: Leonardo Valentim, Natasha Teixeira, Udymilla Chagas, Karina Zaniti Sanches e Lucas Leão Franco.
 
 O sistema testado é o **Saborino**, um sistema web de gestão de uma pequena produção de alimentos
 (Django REST Framework, PostgreSQL 15 e Vue 3). O código está em `sistema/saborino`.
