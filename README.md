@@ -35,4 +35,14 @@ docker compose -p p2tqs-saborino -f docker-compose.yml run --rm api python manag
 bash ../ambiente/smoke.sh                                                            # verificação rápida da API
 ```
 
-Os testes do grupo (unitários, API com Postman e interface com Selenium) entram nas próximas etapas.
+### Testes unitários do grupo (pytest)
+
+Ficam em `sistema/testes/unitarios`. Rodam dentro do container da API, sem banco (as dependências de teste ficam numa pasta fora do projeto):
+
+```bash
+docker run --rm -v ~/.p2_saborino/pydeps:/deps python:3.12-slim-bookworm pip install -q --target /deps pytest==8.4.2 pytest-django==4.11.1 pytest-cov
+docker compose -p p2tqs-saborino -f docker-compose.yml -f ../ambiente/docker-compose.teste.yml run --rm --no-deps \
+  -v ~/.p2_saborino/pydeps:/deps -v "$PWD/../testes:/testes" -e PYTHONPATH=/deps:/app:/p2 -w /testes api python -m pytest -v
+```
+
+Os testes de API (Postman) e de interface (Selenium) entram nas próximas etapas.

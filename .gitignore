@@ -7,6 +7,7 @@
 /sistema/*
 !/sistema/saborino/
 !/sistema/ambiente/
+!/sistema/testes/
 
 __pycache__/
 *.pyc
