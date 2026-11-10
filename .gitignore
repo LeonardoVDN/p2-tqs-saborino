@@ -20,3 +20,5 @@ dist/
 !*.env.example
 *.log
 .pytest_cache/
+.coverage
+coverage.xml
