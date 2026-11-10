@@ -1,0 +1,838 @@
+{
+  "info": {
+    "name": "Saborino · Testes de API (P2 TQS)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Testes de integração da API do Saborino (cópia local com dados fictícios). Antes de rodar, restaure os dados com o seed (ver README do repositório). Rode as pastas em ordem: as requisições passam dados umas para as outras (cliente, produtos, venda)."
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Responde em até 2 s\", () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "csrf",
+      "value": ""
+    },
+    {
+      "key": "bolo_id",
+      "value": ""
+    },
+    {
+      "key": "mousse_id",
+      "value": ""
+    },
+    {
+      "key": "cliente_id",
+      "value": ""
+    },
+    {
+      "key": "venda_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticação",
+      "item": [
+        {
+          "name": "Obter token CSRF",
+          "description": "",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/csrf/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "csrf",
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Contrato: csrfToken é texto\", () => pm.expect(j.csrfToken).to.be.a(\"string\").and.not.empty);",
+                  "pm.collectionVariables.set(\"csrf\", j.csrfToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login com senha errada",
+          "description": "CT-002 / RF-01 (negativo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/sessions/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "sessions",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"senha-errada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"Mensagem de erro\", () => pm.expect(pm.response.json().detail).to.eql(\"E-mail ou senha inválidos.\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login válido",
+          "description": "CT-001 / RF-01 (positivo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/sessions/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "sessions",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{senha}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Renovar token CSRF depois do login",
+          "description": "O token CSRF muda depois do login.",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/csrf/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "csrf",
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"csrf\", pm.response.json().csrfToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Usuário logado",
+          "description": "",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Contrato: id e email\", () => { pm.expect(j).to.have.property(\"id\"); pm.expect(j.email).to.eql(pm.environment.get(\"email\") || pm.collectionVariables.get(\"email\")); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cadastros",
+      "item": [
+        {
+          "name": "Listar produtos",
+          "description": "",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produtos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "produtos",
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Contrato: lista com id, nome e preco_venda\", () => { pm.expect(j).to.be.an(\"array\").that.is.not.empty; j.forEach(p => pm.expect(p).to.include.keys(\"id\", \"nome\", \"preco_venda\")); });",
+                  "const bolo = j.find(p => p.nome === \"Bolo de Pote Teste\"); const mousse = j.find(p => p.nome === \"Mousse Teste\");",
+                  "pm.test(\"Produtos do seed presentes\", () => { pm.expect(bolo).to.be.ok; pm.expect(mousse).to.be.ok; });",
+                  "pm.collectionVariables.set(\"bolo_id\", bolo.id); pm.collectionVariables.set(\"mousse_id\", mousse.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastrar cliente válido",
+          "description": "CT-004 / RF-02 (positivo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cliente Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Nome gravado\", () => pm.expect(j.nome).to.eql(\"Cliente Postman\"));",
+                  "pm.collectionVariables.set(\"cliente_id\", j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastrar cliente com nome vazio",
+          "description": "CT-006 / RF-02 (negativo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Erro no campo nome\", () => pm.expect(pm.response.json()).to.have.property(\"nome\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vendas",
+      "item": [
+        {
+          "name": "Registrar venda fiado",
+          "description": "CT-013 / RF-04 (positivo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendas",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"{{cliente_id}}\",\n  \"itens_input\": [\n    {\n      \"produto\": \"{{bolo_id}}\",\n      \"quantidade\": 2\n    },\n    {\n      \"produto\": \"{{mousse_id}}\",\n      \"quantidade\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Total 34,00\", () => pm.expect(j.valor_total).to.eql(\"34.00\"));",
+                  "pm.test(\"Gera valor a receber ABERTO de 34,00\", () => { pm.expect(j.recebivel.status).to.eql(\"ABERTO\"); pm.expect(j.recebivel.a_receber).to.eql(\"34.00\"); });",
+                  "pm.collectionVariables.set(\"venda_id\", j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar venda sem itens",
+          "description": "CT-015 / RF-04 (negativo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendas",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"{{cliente_id}}\",\n  \"itens_input\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Mensagem de item obrigatório\", () => pm.expect(pm.response.json().itens_input[0]).to.eql(\"A venda precisa de ao menos um item.\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar venda com quantidade negativa",
+          "description": "CT-017 / RF-04 (negativo). Falha esperada enquanto o DEF-004 não for corrigido.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendas",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"{{cliente_id}}\",\n  \"itens_input\": [\n    {\n      \"produto\": \"{{bolo_id}}\",\n      \"quantidade\": -2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Recebimentos",
+      "item": [
+        {
+          "name": "Registrar pagamento parcial",
+          "description": "CT-021 / RF-05 (positivo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pagamentos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pagamentos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"{{cliente_id}}\",\n  \"valor\": \"20.00\",\n  \"forma_pagamento\": \"PIX\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Aloca 20,00 na venda\", () => pm.expect(j.alocacoes[0].valor_aplicado).to.eql(\"20.00\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Saldo depois do pagamento parcial",
+          "description": "CT-021 / RF-05",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recebiveis/?cliente={{cliente_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "recebiveis",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "cliente",
+                  "value": "{{cliente_id}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json()[0];",
+                  "pm.test(\"Saldo 14,00 e status PARCIAL\", () => { pm.expect(r.a_receber).to.eql(\"14.00\"); pm.expect(r.status).to.eql(\"PARCIAL\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar pagamento negativo",
+          "description": "CT-027 / RF-05 (negativo). Falha esperada enquanto o DEF-008 não for corrigido.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/pagamentos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pagamentos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"{{cliente_id}}\",\n  \"valor\": \"-5.00\",\n  \"forma_pagamento\": \"PIX\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Quitar o saldo da venda",
+          "description": "CT-022 / RF-05 (positivo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendas/{{venda_id}}/quitar/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendas",
+                "{{venda_id}}",
+                "quitar",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"forma_pagamento\": \"PIX\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Quita os 14,00 restantes\", () => pm.expect(pm.response.json().valor).to.eql(\"14.00\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Quitar venda já paga",
+          "description": "CT-028 / RF-05 (negativo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendas/{{venda_id}}/quitar/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendas",
+                "{{venda_id}}",
+                "quitar",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"forma_pagamento\": \"PIX\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Mensagem de venda quitada\", () => pm.expect(pm.response.json().detail).to.eql(\"Venda já está quitada.\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Segurança",
+      "item": [
+        {
+          "name": "Sair (logout)",
+          "description": "CT-003 / RF-01",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRFToken",
+                "value": "{{csrf}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/session/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "session",
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar clientes sem login",
+          "description": "CT-031 / RNF-01",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/clientes/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes",
+                ""
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

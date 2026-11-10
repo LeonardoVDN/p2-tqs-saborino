@@ -45,4 +45,14 @@ docker compose -p p2tqs-saborino -f docker-compose.yml -f ../ambiente/docker-com
   -v ~/.p2_saborino/pydeps:/deps -v "$PWD/../testes:/testes" -e PYTHONPATH=/deps:/app:/p2 -w /testes api python -m pytest -v
 ```
 
-Os testes de API (Postman) e de interface (Selenium) entram nas próximas etapas.
+### Testes de API (Postman e Newman)
+
+A coleção e o ambiente ficam em `sistema/testes/api` e podem ser importados no Postman. Para rodar pelo terminal com o Newman (`npm install -g newman newman-reporter-htmlextra`), com o sistema no ar:
+
+```bash
+bash sistema/testes/api/rodar-newman.sh
+```
+
+O script restaura os dados fictícios antes e depois e grava os relatórios em `sistema/testes/api/resultado/`. Duas verificações falham de propósito enquanto os defeitos DEF-004 e DEF-008 (issues #4 e #8) não forem corrigidos.
+
+Os testes de interface (Selenium) entram na próxima etapa.
