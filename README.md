@@ -55,4 +55,13 @@ bash sistema/testes/api/rodar-newman.sh
 
 O script restaura os dados fictícios antes e depois e grava os relatórios em `sistema/testes/api/resultado/`. Duas verificações falham de propósito enquanto os defeitos DEF-004 e DEF-008 (issues #4 e #8) não forem corrigidos.
 
-Os testes de interface (Selenium) entram na próxima etapa.
+### Testes de interface (Selenium)
+
+Ficam em `sistema/testes/interface` e rodam no Chrome do computador (sem janela), com o sistema no ar. Cada teste restaura os dados fictícios antes de começar e salva um print no final:
+
+```bash
+pip install pytest==8.4.2 selenium==4.35.0 pytest-html
+cd sistema/testes/interface && python -m pytest -v
+```
+
+Os prints ficam em `sistema/testes/interface/resultado/`. Para ver o navegador abrindo, use `MOSTRAR_NAVEGADOR=1`. O teste do nome de produto repetido falha enquanto o DEF-001 (issue #1) não for corrigido.
