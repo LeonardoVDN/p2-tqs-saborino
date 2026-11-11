@@ -15,9 +15,13 @@ from .models import (
 
 # ---------- Itens de venda ----------
 
+# Menor quantidade com três casas decimais, ou seja, maior que zero.
+QUANTIDADE_MINIMA = Decimal('0.001')
+
+
 class ItemVendaWriteSerializer(serializers.Serializer):
     produto = serializers.PrimaryKeyRelatedField(queryset=Produto.objects.all())
-    quantidade = serializers.DecimalField(max_digits=10, decimal_places=3, default=Decimal('1'), min_value=Decimal('0.001'))
+    quantidade = serializers.DecimalField(max_digits=10, decimal_places=3, default=Decimal('1'), min_value=QUANTIDADE_MINIMA)
     preco_unitario = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
 
