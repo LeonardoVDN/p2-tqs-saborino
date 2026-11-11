@@ -188,6 +188,13 @@ class RegistrarPagamentoSerializer(serializers.Serializer):
     observacoes = serializers.CharField(required=False, allow_blank=True)
     alocacoes = AlocacaoInputSerializer(many=True, required=False)
 
+    def validate(self, attrs):
+        saldo = sum((r.a_receber for r in services.recebiveis_abertos_do_cliente(attrs['cliente'])), Decimal('0'))
+        if attrs['valor'] > saldo:
+            saldo_br = f'{saldo:.2f}'.replace('.', ',')
+            raise serializers.ValidationError({'valor': f'O valor é maior que o saldo em aberto do cliente (R$ {saldo_br}).'})
+        return attrs
+
     def create(self, validated_data):
         request = self.context.get('request')
         user = request.user if request and request.user.is_authenticated else None
