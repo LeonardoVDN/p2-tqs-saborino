@@ -64,7 +64,7 @@ pip install pytest==8.4.2 selenium==4.35.0 pytest-html
 cd sistema/testes/interface && python -m pytest -v
 ```
 
-Os prints ficam em `sistema/testes/interface/resultado/`. Para ver o navegador abrindo, use `MOSTRAR_NAVEGADOR=1`. O teste do nome de produto repetido falha enquanto o DEF-001 (issue #1) não for corrigido.
+Os prints ficam em `sistema/testes/interface/resultado/`. Para ver o navegador abrindo, use `MOSTRAR_NAVEGADOR=1`.
 
 ### Testes não funcionais
 

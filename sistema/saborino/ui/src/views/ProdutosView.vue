@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import api from '@/api/client'
 import { brl } from '@/utils/format'
+import { mensagemDaApi } from '@/utils/erros'
 import { useToast } from '@/composables/useToast'
 
 const { toast } = useToast()
@@ -25,9 +26,14 @@ async function carregar() {
 async function salvar() {
   const f = form.value
   const payload = { ...f, preco_venda: f.preco_venda || 0, custo_estimado_unitario: f.custo_estimado_unitario || 0 }
-  if (f.id) await api.put(`/produtos/${f.id}/`, payload)
-  else await api.post('/produtos/', payload)
-  toast('Produto salvo'); form.value = null; carregar()
+  try {
+    if (f.id) await api.put(`/produtos/${f.id}/`, payload)
+    else await api.post('/produtos/', payload)
+  } catch (e) {
+    toast(mensagemDaApi(e, 'Não foi possível salvar o produto.'))
+    return
+  }
+  toast('Produto salvo'); form.value = null; await carregar()
 }
 onMounted(carregar)
 </script>

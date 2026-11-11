@@ -100,7 +100,7 @@ def test_pagamento_parcial_deixa_saldo_de_14_e_status_parcial(navegador):
     assert 'R$ 14,00' in linha and 'PARCIAL' in linha
 
 
-# RF-03 · CT-011 · falha enquanto o DEF-001 não for corrigido
+# RF-03 · CT-011 (DEF-001)
 def test_produto_com_nome_repetido_mostra_erro_na_tela(navegador):
     entrar_e_esperar_painel(navegador)
     navegador.get(URL + '/produtos')
