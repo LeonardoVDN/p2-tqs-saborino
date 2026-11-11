@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 from .models import Canal, Cliente, Competencia, Conta, Produto
@@ -38,6 +40,12 @@ class ProdutoSerializer(serializers.ModelSerializer):
             'preco_venda', 'custo_estimado_unitario', 'sazonal', 'ativo', 'observacoes',
         ]
         read_only_fields = ['id', 'categoria_display']
+        extra_kwargs = {
+            'preco_venda': {
+                'min_value': Decimal('0'),
+                'error_messages': {'min_value': 'O preço de venda não pode ser negativo.'},
+            },
+        }
 
 
 class ClienteSerializer(serializers.ModelSerializer):
