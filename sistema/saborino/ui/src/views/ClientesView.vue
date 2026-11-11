@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import api from '@/api/client'
 import { useToast } from '@/composables/useToast'
+import { mensagemDaApi } from '@/utils/erros'
 
 const { toast } = useToast()
 const clientes = ref([])
@@ -21,9 +22,14 @@ async function carregar() {
 }
 async function salvar() {
   const f = form.value
-  if (f.id) await api.put(`/clientes/${f.id}/`, f)
-  else await api.post('/clientes/', f)
-  toast('Cliente salvo'); form.value = null; carregar()
+  try {
+    if (f.id) await api.put(`/clientes/${f.id}/`, f)
+    else await api.post('/clientes/', f)
+  } catch (e) {
+    toast(mensagemDaApi(e, 'Não foi possível salvar o cliente.'))
+    return
+  }
+  toast('Cliente salvo'); form.value = null; await carregar()
 }
 onMounted(carregar)
 </script>

@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue'
 import api from '@/api/client'
 import { useCompetenciaStore } from '@/stores/competencia'
 import { brl } from '@/utils/format'
+import { mensagemDaApi } from '@/utils/erros'
 import { useToast } from '@/composables/useToast'
 
 const comp = useCompetenciaStore()
@@ -40,19 +41,29 @@ async function carregar() {
 watch(() => comp.atual, carregar, { immediate: true })
 
 async function quitar(r, forma) {
-  await api.post(`/vendas/${r.venda}/quitar/`, { forma_pagamento: forma })
+  try {
+    await api.post(`/vendas/${r.venda}/quitar/`, { forma_pagamento: forma })
+  } catch (e) {
+    toast(mensagemDaApi(e, 'Não foi possível quitar a venda.'))
+    return
+  }
   toast('Recebido!')
-  carregar()
+  await carregar()
 }
 
 async function registrarPagamento() {
   if (!pagCliente.value || !pagValor.value) return
-  await api.post('/pagamentos/', {
-    cliente: pagCliente.value, valor: pagValor.value, forma_pagamento: pagForma.value,
-  })
+  try {
+    await api.post('/pagamentos/', {
+      cliente: pagCliente.value, valor: pagValor.value, forma_pagamento: pagForma.value,
+    })
+  } catch (e) {
+    toast(mensagemDaApi(e, 'Não foi possível registrar o pagamento.'))
+    return
+  }
   toast('Pagamento registrado')
   pagCliente.value = null; pagValor.value = ''
-  carregar()
+  await carregar()
 }
 
 function whatsapp(r) {
