@@ -65,3 +65,13 @@ cd sistema/testes/interface && python -m pytest -v
 ```
 
 Os prints ficam em `sistema/testes/interface/resultado/`. Para ver o navegador abrindo, use `MOSTRAR_NAVEGADOR=1`. O teste do nome de produto repetido falha enquanto o DEF-001 (issue #1) não for corrigido.
+
+### Testes não funcionais
+
+Ficam em `sistema/testes/nao-funcionais`, com o sistema no ar. `nf_api.py` mede desempenho, segurança básica e confiabilidade pela API (só precisa do Python). `nf_interface.py` mede o tempo das telas e a compatibilidade (Chrome em duas resoluções e Safari), com o Selenium:
+
+```bash
+cd sistema/testes/nao-funcionais
+python3 nf_api.py resultado
+python nf_interface.py resultado
+```
