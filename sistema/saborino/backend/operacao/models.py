@@ -103,14 +103,15 @@ class ItemVenda(models.Model):
     def __str__(self):
         return f'{self.quantidade}x {self.produto} @ {self.preco_unitario}'
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, subtotal_informado=False, **kwargs):
         # Snapshot do preço/custo do catálogo no momento da venda.
         if self.produto_id:
             if not self.preco_unitario:
                 self.preco_unitario = self.produto.preco_venda
             if not self.custo_unitario:
                 self.custo_unitario = self.produto.custo_estimado_unitario
-        if not self.subtotal:
+        # Subtotal informado (inclusive 0,00, no brinde) é mantido; sem ele, calcula pelo preço.
+        if not self.subtotal and not subtotal_informado:
             self.subtotal = q2(Decimal(self.quantidade) * Decimal(self.preco_unitario))
         super().save(*args, **kwargs)
 

@@ -102,7 +102,7 @@ class VendaSerializer(serializers.ModelSerializer):
                 kwargs['preco_unitario'] = item['preco_unitario']
             if item.get('subtotal') is not None:
                 kwargs['subtotal'] = item['subtotal']
-            ItemVenda(**kwargs).save()
+            ItemVenda(**kwargs).save(subtotal_informado='subtotal' in kwargs)
 
     @transaction.atomic
     def create(self, validated_data):
