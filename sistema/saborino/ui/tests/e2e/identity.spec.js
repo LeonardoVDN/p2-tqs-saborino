@@ -33,7 +33,7 @@ test('remove apenas tokens legados e preserva storage alheio', async ({ page }) 
   await expect(page).toHaveTitle('Saborino')
   await expect(page.locator('html')).toHaveAttribute('lang', 'pt-BR')
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', '/saborino-logo.png')
-  await expect(page.getByRole('img', { name: 'Doceria Saborino' })).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Saborino' })).toBeVisible()
 })
 
 test('login após reset usa CSRF renovado sem recarregar nem repetir POST', async ({ page }) => {
@@ -77,7 +77,7 @@ test('logo original permanece legível e sem distorção nas telas públicas no 
   await mockAnonymousApi(page)
   for (const path of ['/login', '/esqueci-senha', '/reenviar-confirmacao', '/confirmar-email', '/redefinir-senha']) {
     await page.goto(path)
-    const logo = page.getByRole('img', { name: 'Doceria Saborino' })
+    const logo = page.getByRole('img', { name: 'Saborino' })
     await expect(logo).toBeVisible()
     await expect(logo).toHaveAttribute('src', '/saborino-logo.png')
     await expect.poll(() => logo.evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true)

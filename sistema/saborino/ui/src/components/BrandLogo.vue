@@ -4,7 +4,7 @@ defineProps({ compact: Boolean })
 
 <template>
   <img class="brand-logo" :class="{ compact }" src="/saborino-logo.png"
-       alt="Doceria Saborino" width="1136" height="1132" decoding="async" />
+       alt="Saborino" width="1136" height="1132" decoding="async" />
 </template>
 
 <style scoped>
