@@ -60,7 +60,7 @@ def test_pagamento_parcial_prevalece_sobre_vencimento():
     assert recebivel('34.00', '10.00', ontem).status == Recebivel.Status.PARCIAL
 
 
-# RF-06 · CT-029
+# RF-06 (rótulo do mês usado no painel e no fechamento)
 def test_rotulo_da_competencia_usa_nome_do_mes():
     assert Competencia(ano=2026, mes=11).rotulo == 'Novembro/2026'
 
