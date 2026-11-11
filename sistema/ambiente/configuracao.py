@@ -1,6 +1,3 @@
-# Ajuste do ambiente de teste do P2, sem alterar o código do sistema.
-# O frontend (localhost:5173) chama a API (localhost:8000) com cookie de sessão,
-# e sem esta opção o navegador bloqueia as requisições por CORS.
+# Configuração do ambiente de teste do P2. Hoje só reaproveita a do sistema.
+# Até 10/11/2026 ela ligava o CORS_ALLOW_CREDENTIALS, que o sistema não tinha (DEF-009).
 from core.settings import *  # noqa: F401,F403
-
-CORS_ALLOW_CREDENTIALS = True
