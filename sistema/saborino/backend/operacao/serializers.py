@@ -17,7 +17,7 @@ from .models import (
 
 class ItemVendaWriteSerializer(serializers.Serializer):
     produto = serializers.PrimaryKeyRelatedField(queryset=Produto.objects.all())
-    quantidade = serializers.DecimalField(max_digits=10, decimal_places=3, default=Decimal('1'))
+    quantidade = serializers.DecimalField(max_digits=10, decimal_places=3, default=Decimal('1'), min_value=Decimal('0.001'))
     preco_unitario = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
 
