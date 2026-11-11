@@ -79,3 +79,7 @@ python nf_interface.py resultado
 ### Pipeline (GitHub Actions)
 
 O arquivo `.github/workflows/testes.yml` roda a cada envio para a `main` e a cada pull request. Ele instala as dependências, executa os testes unitários do grupo e a suíte do sistema (com um PostgreSQL 15 de serviço) e publica o resultado como artefato. As execuções ficam na aba Actions.
+
+### Análise de qualidade (SonarCloud)
+
+O SonarCloud analisa a `main` a cada envio, com a configuração de `.sonarcloud.properties`. Painel do projeto: https://sonarcloud.io/summary/overall?id=LeonardoVDN_p2-tqs-saborino
