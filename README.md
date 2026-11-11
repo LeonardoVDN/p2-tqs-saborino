@@ -75,3 +75,7 @@ cd sistema/testes/nao-funcionais
 python3 nf_api.py resultado
 python nf_interface.py resultado
 ```
+
+### Pipeline (GitHub Actions)
+
+O arquivo `.github/workflows/testes.yml` roda a cada envio para a `main` e a cada pull request. Ele instala as dependências, executa os testes unitários do grupo e a suíte do sistema (com um PostgreSQL 15 de serviço) e publica o resultado como artefato. As execuções ficam na aba Actions.
