@@ -1,0 +1,95 @@
+# Pipeline de testes do P2 (TQS 2026).
+# Roda a cada envio de código para a main e a cada pull request.
+# Os valores abaixo são fictícios, os mesmos de sistema/ambiente/env.teste.
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  testes:
+    name: Testes automatizados
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_DB: saborino_p2
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DEBUG: "1"
+      SECRET_KEY: p2-tqs-2026-chave-ficticia-somente-para-teste-local
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      POSTGRES_DB: saborino_p2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: "5432"
+      EMAIL_PROVIDER: fake
+      EMAIL_DISPATCH_ENABLED: "0"
+      CELERY_BROKER_URL: memory://
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v7
+
+      - name: Preparar o Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: sistema/saborino/backend/requirements.txt
+
+      - name: Instalar as dependências
+        run: |
+          pip install -r sistema/saborino/backend/requirements.txt
+          pip install pytest==8.4.2 pytest-django==4.11.1
+          mkdir -p sistema/testes/resultado
+
+      - name: Testes unitários do grupo (pytest)
+        working-directory: sistema/testes
+        run: python -m pytest -v --junitxml=resultado/unitarios.xml 2>&1 | tee resultado/unitarios.txt
+
+      - name: Testes do sistema (Django)
+        if: ${{ !cancelled() }}
+        working-directory: sistema/saborino/backend
+        run: python manage.py test -v 2 2>&1 | tee ../../testes/resultado/sistema.txt
+
+      - name: Resumo
+        if: ${{ !cancelled() }}
+        working-directory: sistema/testes/resultado
+        run: |
+          unit=$(tail -n 1 unitarios.txt 2>/dev/null | tr -d '=' | sed 's/^ *//;s/ *$//')
+          ran=$(grep -E '^Ran ' sistema.txt 2>/dev/null)
+          fim=$(grep -E '^(OK|FAILED)' sistema.txt 2>/dev/null | tail -n 1)
+          {
+            echo "| Suíte | Resultado |"
+            echo "|---|---|"
+            echo "| Unitários do grupo (pytest) | ${unit:-não executado} |"
+            echo "| Sistema (Django) | ${ran:-não executado} ${fim} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publicar o resultado
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: resultado-dos-testes
+          path: sistema/testes/resultado/

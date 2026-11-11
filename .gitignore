@@ -3,6 +3,7 @@
 /*
 !/.gitignore
 !/README.md
+!/.github/
 !/sistema/
 /sistema/*
 !/sistema/saborino/
@@ -22,6 +23,7 @@ dist/
 .pytest_cache/
 .coverage
 coverage.xml
+sistema/testes/resultado/
 sistema/testes/api/resultado/
 sistema/testes/interface/resultado/
 sistema/testes/nao-funcionais/resultado/
