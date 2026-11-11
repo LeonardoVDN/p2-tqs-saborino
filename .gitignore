@@ -4,6 +4,7 @@
 !/.gitignore
 !/README.md
 !/.github/
+!/.sonarcloud.properties
 !/sistema/
 /sistema/*
 !/sistema/saborino/
