@@ -176,7 +176,10 @@ class AlocacaoInputSerializer(serializers.Serializer):
 class RegistrarPagamentoSerializer(serializers.Serializer):
     """Entrada para registrar um pagamento (parcial ou consolidado)."""
     cliente = serializers.PrimaryKeyRelatedField(queryset=Cliente.objects.all())
-    valor = serializers.DecimalField(max_digits=10, decimal_places=2)
+    valor = serializers.DecimalField(
+        max_digits=10, decimal_places=2, min_value=Decimal('0.01'),
+        error_messages={'min_value': 'O valor do pagamento deve ser maior que zero.'},
+    )
     forma_pagamento = serializers.ChoiceField(choices=FormaPagamento.choices, default=FormaPagamento.PIX)
     data = serializers.DateField(required=False)
     conta_recebimento = serializers.PrimaryKeyRelatedField(
