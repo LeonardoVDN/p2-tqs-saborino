@@ -64,7 +64,7 @@ jobs:
           pip install pytest==8.4.2 pytest-django==4.11.1
           mkdir -p sistema/testes/resultado
 
-      - name: Testes unitários do grupo (pytest)
+      - name: Testes do grupo (pytest)
         working-directory: sistema/testes
         run: python -m pytest -v --junitxml=resultado/unitarios.xml 2>&1 | tee resultado/unitarios.txt
 
@@ -83,7 +83,7 @@ jobs:
           {
             echo "| Suíte | Resultado |"
             echo "|---|---|"
-            echo "| Unitários do grupo (pytest) | ${unit:-não executado} |"
+            echo "| Testes do grupo (pytest) | ${unit:-não executado} |"
             echo "| Sistema (Django) | ${ran:-não executado} ${fim} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
