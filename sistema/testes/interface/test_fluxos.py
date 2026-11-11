@@ -100,6 +100,17 @@ def test_pagamento_parcial_deixa_saldo_de_14_e_status_parcial(navegador):
     assert 'R$ 14,00' in linha and 'PARCIAL' in linha
 
 
+
+# RF-05 · CT-025 pela tela: a recusa da API aparece para o usuário
+def test_pagamento_acima_do_saldo_mostra_erro_na_tela(navegador):
+    entrar_e_esperar_painel(navegador)
+    registrar_venda_fiado(navegador)
+    linhas_a_receber(navegador)
+    Select(navegador.find_element(By.CSS_SELECTOR, '.card select.select:not(.comp-select)')).select_by_index(1)
+    navegador.find_element(By.CSS_SELECTOR, 'input[placeholder="Valor"]').send_keys('1000')
+    botao(navegador, 'Registrar').click()
+    assert texto_aparece(navegador, 'maior que o saldo')
+
 # RF-03 · CT-011 (DEF-001)
 def test_produto_com_nome_repetido_mostra_erro_na_tela(navegador):
     entrar_e_esperar_painel(navegador)
