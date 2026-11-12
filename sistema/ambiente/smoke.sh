@@ -16,7 +16,7 @@ csrf() { awk '$6 ~ /csrf/ {v=$7} END {print v}' "$JAR"; }
 # passo RÓTULO MÉTODO CAMINHO [JSON] [corpo|itens]: faz a requisição e imprime uma linha de resultado
 passo() {
   local rotulo="$1" metodo="$2" caminho="$3" dados="${4:-}" extra="${5:-}" codigo detalhe=''
-  if [ -n "$dados" ]; then
+  if [[ -n "$dados" ]]; then
     codigo="$(curl -s -o "$BODY_FILE" -w '%{http_code}' -b "$JAR" -c "$JAR" -X "$metodo" \
       -H 'Content-Type: application/json' -H "X-CSRFToken: $(csrf)" --data "$dados" "$BASE$caminho")"
   else
