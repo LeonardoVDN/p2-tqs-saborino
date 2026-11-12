@@ -60,8 +60,8 @@ jobs:
 
       - name: Instalar as dependências
         run: |
-          pip install -r sistema/saborino/backend/requirements.txt
-          pip install pytest==8.4.2 pytest-django==4.11.1
+          pip install --only-binary :all: -r sistema/saborino/backend/requirements.txt
+          pip install --only-binary :all: pytest==8.4.2 pytest-django==4.11.1
           mkdir -p sistema/testes/resultado
 
       - name: Testes do grupo (pytest)
