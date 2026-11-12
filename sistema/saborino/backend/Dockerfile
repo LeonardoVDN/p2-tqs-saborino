@@ -11,9 +11,8 @@ ENV PYTHONUNBUFFERED=1
 # Copia as dependências para dentro do container
 COPY requirements.txt .
 
-# Instala as dependências
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Instala as dependências: só pacotes binários, conferidos pelos hashes do requirements.txt
+RUN pip install --no-cache-dir --only-binary :all: --require-hashes -r requirements.txt
 
 # Cria um usuário sem privilégios para segurança
 RUN useradd -r django_user
