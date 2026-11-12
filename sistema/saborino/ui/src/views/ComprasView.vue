@@ -4,6 +4,7 @@ import api from '@/api/client'
 import { useCompetenciaStore } from '@/stores/competencia'
 import { brl } from '@/utils/format'
 import { useToast } from '@/composables/useToast'
+import { mensagemDaApi } from '@/utils/erros'
 
 const comp = useCompetenciaStore()
 const { toast } = useToast()
@@ -31,8 +32,13 @@ async function carregarAux() {
 async function salvar() {
   const f = { ...form.value }
   if (!f.valor_total) f.valor_total = (Number(f.quantidade) * Number(f.preco_unitario || 0)).toFixed(2)
-  await api.post('/compras/', f)
-  toast('Compra registrada'); form.value = null; carregar()
+  try {
+    await api.post('/compras/', f)
+  } catch (e) {
+    toast(mensagemDaApi(e, 'Não foi possível registrar a compra.'))
+    return
+  }
+  toast('Compra registrada'); form.value = null; await carregar()
 }
 watch(() => comp.atual, carregar, { immediate: true })
 onMounted(carregarAux)

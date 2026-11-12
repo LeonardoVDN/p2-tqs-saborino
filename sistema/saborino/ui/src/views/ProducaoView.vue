@@ -4,6 +4,7 @@ import api from '@/api/client'
 import { useCompetenciaStore } from '@/stores/competencia'
 import { num } from '@/utils/format'
 import { useToast } from '@/composables/useToast'
+import { mensagemDaApi } from '@/utils/erros'
 
 const comp = useCompetenciaStore()
 const { toast } = useToast()
@@ -30,9 +31,14 @@ async function carregar() {
 }
 async function salvarProducao(l) {
   const payload = { produto: l.produto, competencia: comp.atual.id, quantidade_produzida: l.quantidade_produzida || 0 }
-  if (l.producao_id) await api.patch(`/producoes/${l.producao_id}/`, payload)
-  else await api.post('/producoes/', payload)
-  toast('Produção salva'); carregar()
+  try {
+    if (l.producao_id) await api.patch(`/producoes/${l.producao_id}/`, payload)
+    else await api.post('/producoes/', payload)
+  } catch (e) {
+    toast(mensagemDaApi(e, 'Não foi possível salvar a produção.'))
+    return
+  }
+  toast('Produção salva'); await carregar()
 }
 watch(() => comp.atual, carregar, { immediate: true })
 </script>
